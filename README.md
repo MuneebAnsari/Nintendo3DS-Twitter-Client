@@ -1,2 +1,2 @@
 # Nintendo3DS-Twitter-Client
-A Twitter Client for the Nintendo 3DS
+A twitter client for the Nintendo 3DS.
