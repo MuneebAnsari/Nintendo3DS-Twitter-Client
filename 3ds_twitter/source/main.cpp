@@ -20,11 +20,12 @@
 #include "http_client.h"
 #include "twitter_data_service.h"
 #include "json_parser.h"
+#include "tweet_graphic.h"
 
 #define SOC_ALIGN 0x1000
 #define SOC_BUFFERSIZE 0x100000
-#define SCREEN_WIDTH 400
-#define SCREEN_HEIGHT 240
+// #define SCREEN_WIDTH 400
+// #define SCREEN_HEIGHT 240
 
 void addTweet(Tweet **tweetLstPtr, char *text, int favCount);
 
@@ -103,11 +104,26 @@ int main()
 	jp.parseTweetObj(jsonUserTweets, n_userTweets, &head, addTweet);
 	head = head->next;
 
+	float sx = 20;
+	float sy = 20;
+
+	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+	// clear render targetmak
+	C2D_TargetClear(top, C2D_Color32(0x00, 0xAC, 0xEE, 0xFF));
+	// draw a 2D scene on a render target
+	C2D_SceneBegin(top);
+
+	// -- Scene --
 	while (head != NULL)
 	{
-		printf("text: %s, fav: %d\n", head->text, head->favCount);
+		TweetGraphic currTweetGraphic = TweetGraphic(head->text, sx, sy);
+		currTweetGraphic.draw();
+		sy = sy + currTweetGraphic.getHeight() + 10;
+
 		head = head->next;
 	}
+
+	C3D_FrameEnd(0);
 
 	// Main loop
 	while (aptMainLoop())
@@ -118,15 +134,24 @@ int main()
 		if (kDown & KEY_START)
 			break; // break in order to return to hbmenu
 
-		C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
-		// clear render targetmak
-		C2D_TargetClear(top, C2D_Color32(0x00, 0xAC, 0xEE, 0xFF));
-		// draw a 2D scene on a render target
-		C2D_SceneBegin(top);
+		// C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+		// // clear render targetmak
+		// C2D_TargetClear(top, C2D_Color32(0x00, 0xAC, 0xEE, 0xFF));
+		// // draw a 2D scene on a render target
+		// C2D_SceneBegin(top);
 
-		// -- Scene --
-		C2D_DrawRectSolid(20, 20, 0, SCREEN_WIDTH - 40, 50, C2D_Color32(0xE3, 0xF1, 0xFC, 0xFF));
-		C3D_FrameEnd(0);
+		// // -- Scene --
+		// // C2D_DrawRectSolid(20, 20, 0, SCREEN_WIDTH - 40, 50, C2D_Color32(0xE3, 0xF1, 0xFC, 0xFF));
+		// while (head != NULL)
+		// {
+		// 	TweetGraphic currTweetGraphic = TweetGraphic(head->text, sx, sy);
+		// 	currTweetGraphic.draw();
+		// 	sy = sy + currTweetGraphic.getHeight() + 10;
+
+		// 	head = head->next;
+		// }
+
+		// C3D_FrameEnd(0);
 	}
 
 	// Exit services
