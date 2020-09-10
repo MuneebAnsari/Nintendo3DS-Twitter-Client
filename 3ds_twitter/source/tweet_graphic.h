@@ -9,6 +9,7 @@
 #include <cstdarg>
 #include <cstdio>
 #include <stdlib.h>
+#include "models.h"
 
 class TweetGraphic
 {

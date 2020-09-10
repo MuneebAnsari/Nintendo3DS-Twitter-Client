@@ -21,6 +21,8 @@
 #include "twitter_data_service.h"
 #include "json_parser.h"
 #include "tweet_graphic.h"
+#include "models.h"
+#include "graphic_drawer.h"
 
 #define SOC_ALIGN 0x1000
 #define SOC_BUFFERSIZE 0x100000
@@ -60,6 +62,7 @@ int main()
 	consoleInit(GFX_BOTTOM, NULL);
 	// create render target (top left screen)
 	C3D_RenderTarget *top = C2D_CreateScreenTarget(GFX_TOP, GFX_LEFT);
+	C2D_TargetClear(top, C2D_Color32(0x00, 0xAC, 0xEE, 0xFF));
 
 	/* 
 	 * Initialize 3DS SOCKET SERVICE before using libcurl 
@@ -104,54 +107,83 @@ int main()
 	jp.parseTweetObj(jsonUserTweets, n_userTweets, &head, addTweet);
 	head = head->next;
 
-	float sx = 20;
-	float sy = 20;
-
-	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
-	// clear render targetmak
-	C2D_TargetClear(top, C2D_Color32(0x00, 0xAC, 0xEE, 0xFF));
-	// draw a 2D scene on a render target
-	C2D_SceneBegin(top);
-
-	// -- Scene --
-	while (head != NULL)
-	{
-		TweetGraphic currTweetGraphic = TweetGraphic(head->text, sx, sy);
-		currTweetGraphic.draw();
-		sy = sy + currTweetGraphic.getHeight() + 10;
-
-		head = head->next;
-	}
-
-	C3D_FrameEnd(0);
+	float xs = 20;
+	float ys = 20;
+	float screenSpace = GSP_SCREEN_HEIGHT_TOP;
+	Tweet *firstTweetOnPrevPage = head;
+	int pageNum = 1;
 
 	// Main loop
 	while (aptMainLoop())
 	{
-		//gspWaitForVBlank();
+		gspWaitForVBlank();
 		hidScanInput();
 		u32 kDown = hidKeysDown();
 		if (kDown & KEY_START)
 			break; // break in order to return to hbmenu
 
-		// C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
-		// // clear render targetmak
-		// C2D_TargetClear(top, C2D_Color32(0x00, 0xAC, 0xEE, 0xFF));
-		// // draw a 2D scene on a render target
-		// C2D_SceneBegin(top);
+		C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+		C2D_SceneBegin(top);
 
-		// // -- Scene --
-		// // C2D_DrawRectSolid(20, 20, 0, SCREEN_WIDTH - 40, 50, C2D_Color32(0xE3, 0xF1, 0xFC, 0xFF));
-		// while (head != NULL)
-		// {
-		// 	TweetGraphic currTweetGraphic = TweetGraphic(head->text, sx, sy);
-		// 	currTweetGraphic.draw();
-		// 	sy = sy + currTweetGraphic.getHeight() + 10;
+		// -- Scene --
 
-		// 	head = head->next;
-		// }
+		while (head != NULL)
+		{
+			TweetGraphic currTweetGraphic = TweetGraphic(head->text, xs, ys);
 
-		// C3D_FrameEnd(0);
+			if (screenSpace > 0)
+			{
+				currTweetGraphic.draw();
+				ys = ys + currTweetGraphic.getHeight() + 10;
+				screenSpace -= ys;
+				head = head->next;
+			}
+			else
+			{
+				break;
+			}
+		}
+
+		if (screenSpace <= 0 && (kDown & KEY_DOWN))
+		{
+
+			C3D_FrameEnd(0);
+			C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+			// clear screen contents
+			C2D_TargetClear(top, C2D_Color32(0x00, 0xAC, 0xEE, 0xFF));
+			C2D_SceneBegin(top);
+			// reset screen space
+			screenSpace = GSP_SCREEN_HEIGHT_TOP;
+			// reset tweet start position to top
+			xs = 20;
+			ys = 20;
+
+			if (pageNum > 1)
+			{
+				Tweet *tmp = head;
+				firstTweetOnPrevPage = head->next;
+				head = tmp;
+			}
+			pageNum++;
+		}
+
+		if (kDown & KEY_UP)
+		{
+			head = firstTweetOnPrevPage;
+			C3D_FrameEnd(0);
+			C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+			// clear screen contents
+			C2D_TargetClear(top, C2D_Color32(0x00, 0xAC, 0xEE, 0xFF));
+			C2D_SceneBegin(top);
+			// reset screen space
+			screenSpace = GSP_SCREEN_HEIGHT_TOP;
+			// reset tweet start position to top
+			xs = 20;
+			ys = 20;
+			pageNum--;
+		}
+
+		C3D_FrameEnd(0);
 	}
 
 	// Exit services

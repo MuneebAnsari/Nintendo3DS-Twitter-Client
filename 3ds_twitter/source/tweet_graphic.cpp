@@ -43,10 +43,10 @@ void TweetGraphic::draw()
 
     // Set tweet height and width to fit tweet content
     C2D_TextGetDimensions(&graphicText, 1.0f, 1.0f, &this->width, &this->height);
-
     this->height = (this->height * (graphicText.width / 1569)) + 20;
     this->width = GSP_SCREEN_HEIGHT_TOP - 40;
 
+    // Draw tweet container
     C2D_DrawRectSolid(this->xStart,
                       this->yStart,
                       0,
@@ -54,6 +54,8 @@ void TweetGraphic::draw()
                       this->height,
                       this->bgClr);
 
+    // Draw text within tweet container and word wrap
+    // width of bounding tweet container with a padding of 5.
     C2D_DrawText(&graphicText,
                  C2D_AlignLeft | C2D_WordWrap,
                  this->xStart + 5,

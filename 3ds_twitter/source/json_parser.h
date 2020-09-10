@@ -7,21 +7,7 @@
 #include <cstring>
 #include <sys/types.h>
 #include <json-c/json.h>
-
-struct tweet
-{
-    char *text;
-    int favCount;
-    struct tweet *next;
-};
-typedef struct tweet Tweet;
-
-typedef struct
-{
-    char *id_str;
-    char *name;
-    char *screen_name;
-} User;
+#include "models.h"
 
 class JsonParser
 {
