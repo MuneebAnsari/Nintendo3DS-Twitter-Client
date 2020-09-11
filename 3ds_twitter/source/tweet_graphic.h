@@ -26,7 +26,6 @@ public:
     float getHeight();
     float getWidth();
     const char *getRawText();
-
     void draw();
 };
 
