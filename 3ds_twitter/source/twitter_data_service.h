@@ -18,6 +18,7 @@ private:
 public:
     TwitterDataService(HttpClient httpClient);
     Response getUserTweets(char *id);
+    Response postTweet(char *params);
     static size_t responseCallback(void *contents,
                                    size_t size,
                                    size_t nmemb,

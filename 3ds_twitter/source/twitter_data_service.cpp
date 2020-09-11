@@ -35,6 +35,30 @@ Response TwitterDataService::getUserTweets(char *id)
     return responseChunk;
 }
 
+Response TwitterDataService::postTweet(char *params)
+{
+    CURLcode res;
+
+    struct curl_slist *headers = NULL;
+    this->httpClient.setRequestHeaders(&headers);
+
+    Response responseChunk;
+    responseChunk.data = NULL;
+    responseChunk.size = 0;
+
+    if ((res = this->httpClient.POST(
+             (char const *)"http://localhost:3001/hello",
+             headers,
+             params,
+             this->responseCallback,
+             &responseChunk)) != CURLE_OK)
+    {
+        fprintf(stderr, "postTweet -> curl_easy_perform() failed: %s\n",
+                curl_easy_strerror(res));
+    }
+    return responseChunk;
+}
+
 /*
     Reference: https://curl.haxx.se/libcurl/c/CURLOPT_WRITEFUNCTION.html
     This callback function gets called by libcurl as soon as there is data 

@@ -28,7 +28,12 @@ public:
 
     CURLcode POST(char const *url,
                   struct curl_slist *headers,
-                  char const *body);
+                  char const *params,
+                  size_t responseCallback(void *contents,
+                                          size_t size,
+                                          size_t nmemb,
+                                          void *dataChunk),
+                  Response *responseChunk);
 
     int setRequestHeaders(struct curl_slist **headers);
 };
