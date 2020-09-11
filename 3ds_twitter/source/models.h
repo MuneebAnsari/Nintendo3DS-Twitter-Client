@@ -11,6 +11,7 @@ struct tweet
     char *text;
     int favCount;
     struct tweet *next;
+    struct tweet *prev;
 };
 typedef struct tweet Tweet;
 
