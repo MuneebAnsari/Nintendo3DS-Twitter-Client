@@ -22,31 +22,41 @@
 #include "json_parser.h"
 #include "tweet_graphic.h"
 #include "models.h"
-#include "graphic_drawer.h"
+#include "timeline.h"
 
 #define SOC_ALIGN 0x1000
 #define SOC_BUFFERSIZE 0x100000
-// #define SCREEN_WIDTH 400
-// #define SCREEN_HEIGHT 240
 
 void addTweet(Tweet **tweetLstPtr, char *text, int favCount);
 
 void addTweet(Tweet **tweetLstPtr, char *text, int favCount)
 {
 	Tweet *new_tweet = (Tweet *)malloc(sizeof(Tweet));
-	Tweet *head = *tweetLstPtr;
+	new_tweet->prev = NULL;
+	new_tweet->next = NULL;
 	new_tweet->text = (char *)malloc(strlen(text) + 1);
 	strcpy(new_tweet->text, text);
 	new_tweet->favCount = favCount;
 
-	// preserve tweet order on insert
-	while (head->next != NULL)
-	{
-		head = head->next;
-	}
+	Tweet *last = *tweetLstPtr;
 
-	head->next = new_tweet;
-	new_tweet->next = NULL;
+	// new tweet is the first tweet
+	if (*tweetLstPtr == NULL)
+	{
+		new_tweet->prev = NULL;
+		*tweetLstPtr = new_tweet;
+	}
+	else
+	{
+		// preserve tweet order on insert
+		while (last->next != NULL)
+		{
+			last = last->next;
+		}
+
+		last->next = new_tweet;
+		new_tweet->prev = last;
+	}
 }
 
 int main()
@@ -102,16 +112,16 @@ int main()
 	json_object *jsonUserTweets = (json_object *)json_tokener_parse(userTweets.data);
 	int n_userTweets = json_object_array_length(jsonUserTweets);
 
-	Tweet *head = (Tweet *)malloc(sizeof(Tweet));
-	head->next = NULL;
+	Tweet *head;
 	jp.parseTweetObj(jsonUserTweets, n_userTweets, &head, addTweet);
-	head = head->next;
+
+	Tweet *last = head->prev;
 
 	float xs = 20;
 	float ys = 20;
 	float screenSpace = GSP_SCREEN_HEIGHT_TOP;
-	Tweet *firstTweetOnPrevPage = head;
 	int pageNum = 1;
+	int numTweetsOnPage = 0;
 
 	// Main loop
 	while (aptMainLoop())
@@ -134,8 +144,10 @@ int main()
 			if (screenSpace > 0)
 			{
 				currTweetGraphic.draw();
+				numTweetsOnPage++;
 				ys = ys + currTweetGraphic.getHeight() + 10;
 				screenSpace -= ys;
+				last = head;
 				head = head->next;
 			}
 			else
@@ -144,9 +156,9 @@ int main()
 			}
 		}
 
-		if (screenSpace <= 0 && (kDown & KEY_DOWN))
+		if (screenSpace <= 0 && (kDown & KEY_DOWN) && head != NULL)
 		{
-
+			pageNum++;
 			C3D_FrameEnd(0);
 			C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 			// clear screen contents
@@ -157,19 +169,14 @@ int main()
 			// reset tweet start position to top
 			xs = 20;
 			ys = 20;
-
-			if (pageNum > 1)
-			{
-				Tweet *tmp = head;
-				firstTweetOnPrevPage = head->next;
-				head = tmp;
-			}
-			pageNum++;
+			numTweetsOnPage = 0;
 		}
 
-		if (kDown & KEY_UP)
+		if ((kDown & KEY_UP) && pageNum > 1)
 		{
-			head = firstTweetOnPrevPage;
+			// tl.scrollUp();
+			pageNum--;
+
 			C3D_FrameEnd(0);
 			C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 			// clear screen contents
@@ -180,7 +187,14 @@ int main()
 			// reset tweet start position to top
 			xs = 20;
 			ys = 20;
-			pageNum--;
+			int i = 0;
+			while ((i < numTweetsOnPage + 1) && last != NULL)
+			{
+				i++;
+				last = last->prev;
+			}
+			head = last->prev;
+			numTweetsOnPage = 0;
 		}
 
 		C3D_FrameEnd(0);
