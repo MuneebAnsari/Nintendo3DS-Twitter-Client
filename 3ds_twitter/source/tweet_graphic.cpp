@@ -54,8 +54,8 @@ void TweetGraphic::draw()
                       this->height,
                       this->bgClr);
 
-    // Draw text within tweet container and word wrap
-    // width of bounding tweet container with a padding of 5.
+    // Draw text within tweet container and word wrap text
+    // within bounding tweet container with a padding of 5.
     C2D_DrawText(&graphicText,
                  C2D_AlignLeft | C2D_WordWrap,
                  this->xStart + 5,
