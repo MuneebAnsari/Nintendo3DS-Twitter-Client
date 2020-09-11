@@ -27,7 +27,19 @@
 #define SOC_ALIGN 0x1000
 #define SOC_BUFFERSIZE 0x100000
 
+void freeTweets(Tweet *head);
 void addTweet(Tweet **tweetLstPtr, char *text, int favCount);
+
+void freeTweets(Tweet *head)
+{
+	Tweet *tweetToFree = head;
+	while (head != NULL)
+	{
+		tweetToFree = head;
+		head = head->next;
+		free(tweetToFree);
+	}
+}
 
 void addTweet(Tweet **tweetLstPtr, char *text, int favCount)
 {
@@ -115,13 +127,7 @@ int main()
 	Tweet *head;
 	jp.parseTweetObj(jsonUserTweets, n_userTweets, &head, addTweet);
 
-	Tweet *last = head->prev;
-
-	float xs = 20;
-	float ys = 20;
-	float screenSpace = GSP_SCREEN_HEIGHT_TOP;
-	int pageNum = 1;
-	int numTweetsOnPage = 0;
+	Timeline timeline = Timeline(&head, top);
 
 	// Main loop
 	while (aptMainLoop())
@@ -136,80 +142,19 @@ int main()
 		C2D_SceneBegin(top);
 
 		// -- Scene --
+		timeline.draw();
 
-		while (head != NULL)
-		{
-			TweetGraphic currTweetGraphic = TweetGraphic(head->text, xs, ys);
+		// check for scroll down event
+		timeline.scrollDown(kDown);
 
-			if (screenSpace > 0)
-			{
-				currTweetGraphic.draw();
-				numTweetsOnPage++;
-				ys = ys + currTweetGraphic.getHeight() + 10;
-				screenSpace -= ys;
-				last = head;
-				head = head->next;
-			}
-			else
-			{
-				break;
-			}
-		}
-
-		if (screenSpace <= 0 && (kDown & KEY_DOWN) && head != NULL)
-		{
-			pageNum++;
-			C3D_FrameEnd(0);
-			C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
-			// clear screen contents
-			C2D_TargetClear(top, C2D_Color32(0x00, 0xAC, 0xEE, 0xFF));
-			C2D_SceneBegin(top);
-			// reset screen space
-			screenSpace = GSP_SCREEN_HEIGHT_TOP;
-			// reset tweet start position to top
-			xs = 20;
-			ys = 20;
-			numTweetsOnPage = 0;
-		}
-
-		if ((kDown & KEY_UP) && pageNum > 1)
-		{
-			// tl.scrollUp();
-			pageNum--;
-
-			C3D_FrameEnd(0);
-			C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
-			// clear screen contents
-			C2D_TargetClear(top, C2D_Color32(0x00, 0xAC, 0xEE, 0xFF));
-			C2D_SceneBegin(top);
-			// reset screen space
-			screenSpace = GSP_SCREEN_HEIGHT_TOP;
-			// reset tweet start position to top
-			xs = 20;
-			ys = 20;
-			int i = 0;
-			while ((i < numTweetsOnPage + 1) && last != NULL)
-			{
-				i++;
-				last = last->prev;
-			}
-			head = last->prev;
-			numTweetsOnPage = 0;
-		}
+		// check for scroll up event
+		timeline.scrollUp(kDown);
 
 		C3D_FrameEnd(0);
 	}
 
 	// Exit services
-
-	// free tweets
-	Tweet *tweetToFree;
-	while (head != NULL)
-	{
-		tweetToFree = head;
-		head = head->next;
-		free(tweetToFree);
-	}
+	freeTweets(head);
 	ss.shutdown();
 	C2D_Fini();
 	C3D_Fini();
