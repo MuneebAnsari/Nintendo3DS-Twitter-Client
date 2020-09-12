@@ -68,7 +68,6 @@ void Timeline::draw()
 
 void Timeline::resetFrame()
 {
-    C3D_FrameEnd(0);
     C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
     // clear screen contents
     C2D_TargetClear(this->target, C2D_Color32(0x00, 0xAC, 0xEE, 0xFF));

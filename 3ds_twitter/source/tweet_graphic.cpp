@@ -6,13 +6,14 @@
 #include <cstdarg>
 #include <cstdio>
 #include <stdlib.h>
+#include "text_graphic.h"
 #include "tweet_graphic.h"
 
 const u32 TweetGraphic::bgClr = C2D_Color32(0xE3, 0xF1, 0xFC, 0xFF);
 
-TweetGraphic::TweetGraphic(const char *rawText, float xStart, float yStart)
+TweetGraphic::TweetGraphic(Tweet *tweet, float xStart, float yStart)
 {
-    this->rawText = rawText;
+    this->tweet = tweet;
     this->xStart = xStart;
     this->yStart = yStart;
 }
@@ -27,24 +28,43 @@ float TweetGraphic::getWidth()
     return this->width;
 }
 
-const char *TweetGraphic::getRawText()
+Tweet *TweetGraphic::getTweet()
 {
-    return this->rawText;
+    return this->tweet;
 }
 
 void TweetGraphic::draw()
 {
-    // Initialize text graphic
-    C2D_Text graphicText;
-    C2D_TextBuf graphicTextBuf = C2D_TextBufNew(300);
-    C2D_TextParse(&graphicText, graphicTextBuf, this->rawText);
-    C2D_TextOptimize(&graphicText);
-    C2D_TextBufClear(graphicTextBuf);
 
-    // Set tweet height and width to fit tweet content
-    C2D_TextGetDimensions(&graphicText, 1.0f, 1.0f, &this->width, &this->height);
-    this->height = (this->height * (graphicText.width / 1569)) + 20;
+    TextGraphic tweetTextGraphic =
+        TextGraphic((this->tweet)->text,
+                    300,
+                    C2D_AlignLeft | C2D_WordWrap,
+                    this->xStart + 5,
+                    this->yStart + 5,
+                    0,
+                    0.5f,
+                    0.5f);
+
+    // Set tweet container height and width to fit tweet content
+    tweetTextGraphic.getDimensions(&this->width, &this->height);
+    this->height = (this->height * (tweetTextGraphic.getC2DText().width / 1569)) + 30;
     this->width = GSP_SCREEN_HEIGHT_TOP - 40;
+
+    // Initialize fav count text
+    char favCountBuf[7];
+    sprintf(favCountBuf, "%d", (this->tweet)->favCount);
+    const char *favCount = favCountBuf;
+
+    TextGraphic favTextGraphic =
+        TextGraphic(favCount,
+                    7,
+                    C2D_AlignLeft,
+                    this->xStart + this->width - 30,
+                    this->yStart + this->height - 15,
+                    0,
+                    0.5f,
+                    0.5f);
 
     // Draw tweet container
     C2D_DrawRectSolid(this->xStart,
@@ -54,14 +74,9 @@ void TweetGraphic::draw()
                       this->height,
                       this->bgClr);
 
-    // Draw text within tweet container and word wrap text
-    // within bounding tweet container with a padding of 5.
-    C2D_DrawText(&graphicText,
-                 C2D_AlignLeft | C2D_WordWrap,
-                 this->xStart + 5,
-                 this->yStart + 5,
-                 0,
-                 0.5f,
-                 0.5f,
-                 this->width - 5);
+    // Draw text within tweet container and add word wrap with a padding of 5.
+    tweetTextGraphic.draw(this->width - 5);
+
+    // Draw fav text
+    favTextGraphic.draw();
 }

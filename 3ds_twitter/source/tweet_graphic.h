@@ -9,6 +9,8 @@
 #include <cstdarg>
 #include <cstdio>
 #include <stdlib.h>
+#include <string>
+#include "text_graphic.h"
 #include "models.h"
 
 class TweetGraphic
@@ -19,13 +21,13 @@ private:
     float xStart;
     float yStart;
     static const u32 bgClr;
-    const char *rawText;
+    Tweet *tweet;
 
 public:
-    TweetGraphic(const char *rawText, float xStart, float yStart);
+    TweetGraphic(Tweet *tweet, float xStart, float yStart);
     float getHeight();
     float getWidth();
-    const char *getRawText();
+    Tweet *getTweet();
     void draw();
 };
 
