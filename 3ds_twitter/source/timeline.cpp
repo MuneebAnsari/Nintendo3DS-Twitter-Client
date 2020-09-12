@@ -48,7 +48,7 @@ void Timeline::draw()
 
     while (this->head != NULL)
     {
-        TweetGraphic currTweetGraphic = TweetGraphic((this->head)->text, this->xs, this->ys);
+        TweetGraphic currTweetGraphic = TweetGraphic(this->head, this->xs, this->ys);
 
         if (this->screenSpace > 0)
         {
