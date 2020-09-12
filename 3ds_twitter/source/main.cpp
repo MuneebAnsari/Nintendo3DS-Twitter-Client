@@ -81,10 +81,13 @@ int main()
 	C2D_Init(C2D_DEFAULT_MAX_OBJECTS);
 	C2D_Prepare();
 
-	consoleInit(GFX_BOTTOM, NULL);
+	// consoleInit(GFX_BOTTOM, NULL);
 	// create render target (top left screen)
 	C3D_RenderTarget *top = C2D_CreateScreenTarget(GFX_TOP, GFX_LEFT);
 	C2D_TargetClear(top, C2D_Color32(0x00, 0xAC, 0xEE, 0xFF));
+
+	C3D_RenderTarget *bottom = C2D_CreateScreenTarget(GFX_BOTTOM, GFX_LEFT);
+	C2D_TargetClear(bottom, C2D_Color32(0x00, 0xAC, 0xEE, 0xFF));
 
 	/* 
 	 * Initialize 3DS SOCKET SERVICE before using libcurl 
@@ -104,7 +107,7 @@ int main()
 		printf("romfsInit: %08lX\n", romfsRes);
 	}
 
-	printf("\nTWITTER ON 3DS\n");
+	//printf("\nTWITTER ON 3DS\n");
 
 	/*
 	 * Initialize HttpClient - uses libcurl to make HTTP requests
@@ -118,7 +121,7 @@ int main()
 	Response userTweets = tds.getUserTweets((char *)"123");
 
 	// printf("MAIN Data: %s\n", userTweets.data);
-	printf("MAIN Size: %lu bytes retrieved\n", (unsigned long)userTweets.size);
+	//printf("MAIN Size: %lu bytes retrieved\n", (unsigned long)userTweets.size);
 
 	JsonParser jp;
 	json_object *jsonUserTweets = (json_object *)json_tokener_parse(userTweets.data);
@@ -128,6 +131,20 @@ int main()
 	jp.parseTweetObj(jsonUserTweets, n_userTweets, &head, addTweet);
 
 	Timeline timeline = Timeline(&head, top);
+
+	/** BOTTOM SCREEN **/
+	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+	C2D_TargetClear(bottom, C2D_Color32(0x00, 0xAC, 0xEE, 0xFF));
+	C2D_SceneBegin(bottom);
+	C2D_DrawRectSolid(20,
+					  20,
+					  0,
+					  280,
+					  150,
+					  C2D_Color32(0xE3, 0xF1, 0xFC, 0xFF));
+	C3D_FrameEnd(0);
+
+	/** **/
 
 	// Main loop
 	while (aptMainLoop())
@@ -139,8 +156,8 @@ int main()
 			break; // break in order to return to hbmenu
 
 		C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
-		C2D_SceneBegin(top);
 
+		C2D_SceneBegin(top);
 		// -- Scene --
 		timeline.draw();
 
