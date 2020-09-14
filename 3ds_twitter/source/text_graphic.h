@@ -23,6 +23,7 @@ private:
     float scaleY;
 
 public:
+    TextGraphic();
     TextGraphic(const char *content,
                 int contentSize,
                 u32 flags,

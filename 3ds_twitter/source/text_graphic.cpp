@@ -8,6 +8,8 @@
 #include <stdlib.h>
 #include "text_graphic.h"
 
+TextGraphic::TextGraphic(){};
+
 TextGraphic::TextGraphic(const char *content,
                          int contentSize,
                          u32 flags,
