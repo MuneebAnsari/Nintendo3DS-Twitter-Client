@@ -6,6 +6,7 @@
 #include <cstdarg>
 #include <cstdio>
 #include <stdlib.h>
+#include <vector>
 #include "tweet_graphic.h"
 #include "models.h"
 #include "timeline.h"
@@ -19,22 +20,24 @@ Timeline::Timeline(Tweet **head, C3D_RenderTarget *target)
     this->xs = 20;
     this->ys = 20;
     this->pageNum = 1;
-    this->numTweetsOnPage = 1;
 }
 
-void Timeline::scrollDown(u32 kDown)
+void Timeline::scrollDown()
 {
-    if (this->screenSpace <= 0 && (kDown & KEY_DOWN) && this->head != NULL)
+    if (this->screenSpace <= 0 && this->head != NULL)
     {
+        this->tweetsPerPage.insert(
+            this->tweetsPerPage.begin() + (this->pageNum - 1),
+            this->numTweetsOnPage);
         this->pageNum++;
         this->resetFrame();
         this->numTweetsOnPage = 0;
     }
 }
 
-void Timeline::scrollUp(u32 kDown)
+void Timeline::scrollUp()
 {
-    if ((kDown & KEY_UP) && this->pageNum > 1)
+    if (this->pageNum > 1)
     {
         this->pageNum--;
         this->resetFrame();
@@ -61,6 +64,7 @@ void Timeline::draw()
         }
         else
         {
+
             break;
         }
     }
@@ -81,11 +85,12 @@ void Timeline::resetFrame()
 
 void Timeline::showPreviousPage()
 {
-    int i = 0;
-    while ((i < this->numTweetsOnPage + 1) && this->last != NULL)
+    int i = 1;
+    int numTweetsOnPrevPage = this->tweetsPerPage.at(this->pageNum - 1);
+    while ((i < this->numTweetsOnPage + numTweetsOnPrevPage) && (this->last)->prev != NULL)
     {
         i++;
         this->last = (this->last)->prev;
     }
-    this->head = (this->last)->prev;
+    this->head = (this->last);
 }

@@ -9,6 +9,7 @@
 #include <cstdarg>
 #include <cstdio>
 #include <stdlib.h>
+#include <vector>
 #include "tweet_graphic.h"
 #include "models.h"
 
@@ -23,14 +24,15 @@ private:
     float screenSpace;
     int pageNum;
     int numTweetsOnPage;
+    std::vector<int> tweetsPerPage;
 
     void showPreviousPage();
     void resetFrame();
 
 public:
     Timeline(Tweet **head, C3D_RenderTarget *target);
-    void scrollDown(u32 kDown);
-    void scrollUp(u32 kDown);
+    void scrollDown();
+    void scrollUp();
     void draw();
 };
 
