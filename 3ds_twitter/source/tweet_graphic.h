@@ -29,7 +29,6 @@ private:
 
 public:
     TweetGraphic(Tweet *tweet, float xStart, float yStart);
-
     float &getHeight();
     float &getWidth();
     Tweet &getTweet();

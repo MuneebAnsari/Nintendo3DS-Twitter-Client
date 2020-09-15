@@ -35,6 +35,25 @@ Tweet &TweetGraphic::getTweet()
     return *this->tweet;
 }
 
+void TweetGraphic::initBounds()
+{
+    // Initialize tweet text
+    this->tweetTextGraphic =
+        TextGraphic((this->tweet)->text,
+                    300,
+                    C2D_AlignLeft | C2D_WordWrap,
+                    this->xStart + 5,
+                    this->yStart + 5,
+                    0,
+                    0.45f,
+                    0.45f);
+
+    //Set tweet container height and width to fit tweet content
+    this->tweetTextGraphic.getDimensions(&this->width, &this->height);
+    this->height = (this->height * (this->tweetTextGraphic.getC2DText().width / 1569)) + 30;
+    this->width = GSP_SCREEN_HEIGHT_TOP - 40;
+}
+
 void TweetGraphic::draw()
 {
     // Initialize fav count text
@@ -46,8 +65,8 @@ void TweetGraphic::draw()
         TextGraphic(favCount,
                     7,
                     C2D_AlignLeft,
-                    this->xStart + this->width - 40,
-                    this->yStart + this->height - 15,
+                    this->xStart + this->width - 20,
+                    this->yStart + this->height - 18,
                     0,
                     0.5f,
                     0.5f);
@@ -71,27 +90,9 @@ void TweetGraphic::draw()
     this->tweetTextGraphic.draw(wordWrap);
 
     // Draw fav heart graphic
-    C2D_DrawImageAt(heart, this->xStart + this->width - 20, this->yStart + this->height - 20, 0);
+    C2D_DrawImageAt(heart, this->xStart + this->width - 40, this->yStart + this->height - 20, 0);
 
     // Draw fav count text
     favCountTextGraphic.draw();
 }
 
-void TweetGraphic::initBounds()
-{
-    // Initialize tweet text
-    this->tweetTextGraphic =
-        TextGraphic((this->tweet)->text,
-                    300,
-                    C2D_AlignLeft | C2D_WordWrap,
-                    this->xStart + 5,
-                    this->yStart + 5,
-                    0,
-                    0.5f,
-                    0.5f);
-
-    //Set tweet container height and width to fit tweet content
-    this->tweetTextGraphic.getDimensions(&this->width, &this->height);
-    this->height = (this->height * (this->tweetTextGraphic.getC2DText().width / 1569)) + 30;
-    this->width = GSP_SCREEN_HEIGHT_TOP - 40;
-}
