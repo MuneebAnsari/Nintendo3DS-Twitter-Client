@@ -23,6 +23,7 @@
 #include "tweet_graphic.h"
 #include "models.h"
 #include "timeline.h"
+#include "post_tweet_graphic.h"
 
 #define SOC_ALIGN 0x1000
 #define SOC_BUFFERSIZE 0x100000
@@ -107,7 +108,7 @@ int main()
 		printf("romfsInit: %08lX\n", romfsRes);
 	}
 
-	//printf("\nTWITTER ON 3DS\n");
+	printf("\nTWITTER ON 3DS\n");
 
 	/*
 	 * Initialize HttpClient - uses libcurl to make HTTP requests
@@ -127,24 +128,11 @@ int main()
 	json_object *jsonUserTweets = (json_object *)json_tokener_parse(userTweets.data);
 	int n_userTweets = json_object_array_length(jsonUserTweets);
 
-	Tweet *head;
+	Tweet *head = NULL;
 	jp.parseTweetObj(jsonUserTweets, n_userTweets, &head, addTweet);
 
 	Timeline timeline = Timeline(&head, top);
-
-	/** BOTTOM SCREEN **/
-	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
-	C2D_TargetClear(bottom, C2D_Color32(0x00, 0xAC, 0xEE, 0xFF));
-	C2D_SceneBegin(bottom);
-	C2D_DrawRectSolid(20,
-					  20,
-					  0,
-					  280,
-					  150,
-					  C2D_Color32(0xE3, 0xF1, 0xFC, 0xFF));
-	C3D_FrameEnd(0);
-
-	/** **/
+	PostTweetGraphic postTweetGraphic = PostTweetGraphic(20, 20);
 
 	// Main loop
 	while (aptMainLoop())
@@ -156,16 +144,30 @@ int main()
 			break; // break in order to return to hbmenu
 
 		C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
-
 		C2D_SceneBegin(top);
 		// -- Scene --
 		timeline.draw();
 
-		// check for scroll down event
-		timeline.scrollDown(kDown);
+		if (kDown & KEY_DOWN)
+		{
+			// check for scroll down event
+			timeline.scrollDown();
+		}
+		else if (kDown & KEY_UP)
+		{
+			// check for scroll up event
+			timeline.scrollUp();
+		}
 
-		// check for scroll up event
-		timeline.scrollUp(kDown);
+		C2D_SceneBegin(bottom);
+		postTweetGraphic.draw();
+
+		if (kDown & KEY_LEFT)
+		{
+			// get input from keyboard and draw on
+			postTweetGraphic.updateWithText();
+			postTweetGraphic.draw();
+		}
 
 		C3D_FrameEnd(0);
 	}
