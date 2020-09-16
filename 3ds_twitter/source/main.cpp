@@ -1,6 +1,7 @@
 #include <3ds.h>
 #include <stdlib.h>
-#include <string.h>
+#include <iostream>
+#include <string>
 #include <stdio.h>
 #include <malloc.h>
 #include <errno.h>
@@ -82,7 +83,7 @@ int main()
 	C2D_Init(C2D_DEFAULT_MAX_OBJECTS);
 	C2D_Prepare();
 
-	// consoleInit(GFX_BOTTOM, NULL);
+	//consoleInit(GFX_BOTTOM, NULL);
 	// create render target (top left screen)
 	C3D_RenderTarget *top = C2D_CreateScreenTarget(GFX_TOP, GFX_LEFT);
 	C2D_TargetClear(top, C2D_Color32(0x00, 0xAC, 0xEE, 0xFF));
@@ -133,6 +134,7 @@ int main()
 
 	Timeline timeline = Timeline(&head, top);
 	PostTweetGraphic postTweetGraphic = PostTweetGraphic(20, 20);
+	std::string status;
 
 	// Main loop
 	while (aptMainLoop())
@@ -160,13 +162,22 @@ int main()
 		}
 
 		C2D_SceneBegin(bottom);
+
 		postTweetGraphic.draw();
 
 		if (kDown & KEY_LEFT)
 		{
-			// get input from keyboard and draw on
-			postTweetGraphic.updateWithText();
+			// check for init keyboard event
+			status = postTweetGraphic.updateWithText();
 			postTweetGraphic.draw();
+		}
+
+		else if (status.length() > 0 && (kDown & KEY_RIGHT))
+		{
+			// post tweet
+			std::string params = status;
+			tds.postTweet(params);
+			status.clear();
 		}
 
 		C3D_FrameEnd(0);

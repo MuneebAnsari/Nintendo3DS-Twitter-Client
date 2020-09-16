@@ -1,3 +1,5 @@
+#include <iostream>
+#include <string>
 #include <3ds.h>
 #include <citro2d.h>
 #include <citro3d.h>
@@ -10,7 +12,7 @@
 
 TextGraphic::TextGraphic(){};
 
-TextGraphic::TextGraphic(const char *content,
+TextGraphic::TextGraphic(std::string content,
                          int contentSize,
                          u32 flags,
                          float x,
@@ -34,7 +36,7 @@ void TextGraphic::getDimensions(float *width, float *height)
 {
     C2D_Text graphicText;
     C2D_TextBuf graphicTextBuf = C2D_TextBufNew(this->contentSize);
-    C2D_TextParse(&graphicText, graphicTextBuf, this->content);
+    C2D_TextParse(&graphicText, graphicTextBuf, this->content.c_str());
     C2D_TextGetDimensions(&graphicText, 1.0f, 1.0f, width, height);
 }
 
@@ -42,7 +44,7 @@ C2D_Text TextGraphic::getC2DText()
 {
     C2D_Text graphicText;
     C2D_TextBuf graphicTextBuf = C2D_TextBufNew(this->contentSize);
-    C2D_TextParse(&graphicText, graphicTextBuf, this->content);
+    C2D_TextParse(&graphicText, graphicTextBuf, this->content.c_str());
     return graphicText;
 }
 
@@ -50,7 +52,7 @@ C2D_Text TextGraphic::draw()
 {
     C2D_Text graphicText;
     C2D_TextBuf graphicTextBuf = C2D_TextBufNew(this->contentSize);
-    C2D_TextParse(&graphicText, graphicTextBuf, this->content);
+    C2D_TextParse(&graphicText, graphicTextBuf, this->content.c_str());
     C2D_TextOptimize(&graphicText);
     C2D_TextBufClear(graphicTextBuf);
 
@@ -69,7 +71,7 @@ C2D_Text TextGraphic::draw(float wordWrap)
 {
     C2D_Text graphicText;
     C2D_TextBuf graphicTextBuf = C2D_TextBufNew(this->contentSize);
-    C2D_TextParse(&graphicText, graphicTextBuf, this->content);
+    C2D_TextParse(&graphicText, graphicTextBuf, this->content.c_str());
     C2D_TextOptimize(&graphicText);
     C2D_TextBufClear(graphicTextBuf);
 

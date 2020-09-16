@@ -1,3 +1,5 @@
+#include <iostream>
+#include <string>
 #include <stdlib.h>
 #include <cstdarg>
 #include <cstdio>
@@ -37,9 +39,9 @@ CURLcode HttpClient::GET(char const *url,
     return reqStatus;
 }
 
-CURLcode HttpClient::POST(char const *url,
+CURLcode HttpClient::POST(std::string url,
                           struct curl_slist *headers,
-                          char const *params,
+                          std::string params,
                           size_t responseCallback(void *contents,
                                                   size_t size,
                                                   size_t nmemb,
@@ -51,8 +53,9 @@ CURLcode HttpClient::POST(char const *url,
 
     if (curl)
     {
-        curl_easy_setopt(curl, CURLOPT_URL, url);
-        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, params);
+
+        curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, params.c_str());
 
         // setup callback to handle response
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, responseCallback);
@@ -71,7 +74,7 @@ int HttpClient::setRequestHeaders(struct curl_slist **headers)
     {
         return -1;
     }
-    *headers = curl_slist_append(*headers, "Connection Keep-Alive");
+    *headers = curl_slist_append(*headers, "Connection: Keep-Alive");
     if (*headers == NULL)
     {
         return -1;

@@ -1,6 +1,8 @@
 #ifndef TWITTER_DATA_SERVICE_H
 #define TWITTER_DATA_SERVICE_H
 
+#include <iostream>
+#include <string>
 #include <stdlib.h>
 #include <cstdarg>
 #include <cstdio>
@@ -18,7 +20,7 @@ private:
 public:
     TwitterDataService(HttpClient httpClient);
     Response getUserTweets(char *id);
-    Response postTweet(char *params);
+    Response postTweet(std::string params);
     static size_t responseCallback(void *contents,
                                    size_t size,
                                    size_t nmemb,

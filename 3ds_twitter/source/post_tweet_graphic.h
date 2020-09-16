@@ -1,6 +1,7 @@
 #ifndef POST_TWEET_GRAPHIC_H
 #define POST_TWEET_GRAPHIC_H
-
+#include <iostream>
+#include <string>
 #include <3ds.h>
 #include <citro2d.h>
 #include <citro3d.h>
@@ -9,20 +10,20 @@
 #include <cstdarg>
 #include <cstdio>
 #include <stdlib.h>
-#include <string.h>
+#include <string>
 #include "text_graphic.h"
 
 class PostTweetGraphic
 {
 private:
     TextGraphic post;
-    char tweetBuf[281];
+    std::string tweetBuf;
     float xStart;
     float yStart;
 
 public:
     PostTweetGraphic(float xStart, float yStart);
-    void updateWithText();
+    std::string updateWithText();
     void draw();
 };
 

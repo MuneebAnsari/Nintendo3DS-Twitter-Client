@@ -1,3 +1,5 @@
+#include <iostream>
+#include <string>
 #include <3ds.h>
 #include <citro2d.h>
 #include <citro3d.h>
@@ -14,11 +16,12 @@ PostTweetGraphic::PostTweetGraphic(float xStart, float yStart)
 {
     this->xStart = xStart;
     this->yStart = yStart;
-    memset(this->tweetBuf, 0, sizeof(this->tweetBuf));
+    this->tweetBuf.clear();
 }
 
-void PostTweetGraphic::updateWithText()
+std::string PostTweetGraphic::updateWithText()
 {
+    char tmp[281];
     SwkbdState kbdState;
     SwkbdStatusData kbdStatus;
     SwkbdButton button = SWKBD_BUTTON_NONE;
@@ -28,9 +31,11 @@ void PostTweetGraphic::updateWithText()
     swkbdSetButton(&kbdState, SWKBD_BUTTON_LEFT, "Cancel", false);
     swkbdSetButton(&kbdState, SWKBD_BUTTON_RIGHT, "Tweet", true);
     swkbdSetStatusData(&kbdState, &kbdStatus, false, true);
-    button = swkbdInputText(&kbdState, this->tweetBuf, sizeof(this->tweetBuf));
+    button = swkbdInputText(&kbdState, tmp, sizeof(tmp));
     if (button != SWKBD_BUTTON_NONE)
     {
+        std::string inpStr(tmp);
+        this->tweetBuf = inpStr;
         this->post =
             TextGraphic(this->tweetBuf,
                         sizeof(this->tweetBuf),
@@ -41,6 +46,7 @@ void PostTweetGraphic::updateWithText()
                         0.45f,
                         0.45f);
     }
+    return this->tweetBuf;
 }
 
 void PostTweetGraphic::draw()
@@ -55,7 +61,7 @@ void PostTweetGraphic::draw()
                       h,
                       C2D_Color32(0xE3, 0xF1, 0xFC, 0xFF));
 
-    if (strlen(this->tweetBuf) == 0)
+    if (this->tweetBuf.length() == 0)
     {
 
         this->post =
@@ -70,12 +76,12 @@ void PostTweetGraphic::draw()
 
         this->post.draw();
     }
-    else if (strlen(this->tweetBuf) <= 281)
+    else if (this->tweetBuf.length() <= 281)
     {
         this->post.draw(w - 15);
     }
     else
     {
-        memset(this->tweetBuf, 0, 281);
+        this->tweetBuf.clear();
     }
 }

@@ -1,6 +1,8 @@
 #ifndef HTTP_CLIENT_H
 #define HTTP_CLIENT_H
 
+#include <iostream>
+#include <string>
 #include <stdlib.h>
 #include <cstdarg>
 #include <cstdio>
@@ -26,9 +28,9 @@ public:
                                          void *dataChunk),
                  Response *responseChunk);
 
-    CURLcode POST(char const *url,
+    CURLcode POST(std::string url,
                   struct curl_slist *headers,
-                  char const *params,
+                  std::string params,
                   size_t responseCallback(void *contents,
                                           size_t size,
                                           size_t nmemb,

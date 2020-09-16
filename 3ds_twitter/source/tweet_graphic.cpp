@@ -56,13 +56,9 @@ void TweetGraphic::initBounds()
 
 void TweetGraphic::draw()
 {
-    // Initialize fav count text
-    char favCountBuf[7];
-    sprintf(favCountBuf, "%d", (this->tweet)->favCount);
-    const char *favCount = favCountBuf;
-
+    // Initialize fav text
     TextGraphic favCountTextGraphic =
-        TextGraphic(favCount,
+        TextGraphic(std::to_string((this->tweet)->favCount),
                     7,
                     C2D_AlignLeft,
                     this->xStart + this->width - 20,
@@ -71,7 +67,7 @@ void TweetGraphic::draw()
                     0.5f,
                     0.5f);
 
-    //Initialize fav graphic
+    // Initialize fav graphic
     C2D_Image heart;
     C3D_Tex heartTex;
     ImageGraphic favHeartGraphic = ImageGraphic(&heart);
@@ -95,4 +91,3 @@ void TweetGraphic::draw()
     // Draw fav count text
     favCountTextGraphic.draw();
 }
-

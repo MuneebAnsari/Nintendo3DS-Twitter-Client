@@ -1,3 +1,5 @@
+#include <iostream>
+#include <string>
 #include <stdlib.h>
 #include <cstdarg>
 #include <cstdio>
@@ -35,7 +37,7 @@ Response TwitterDataService::getUserTweets(char *id)
     return responseChunk;
 }
 
-Response TwitterDataService::postTweet(char *params)
+Response TwitterDataService::postTweet(std::string params)
 {
     CURLcode res;
 
@@ -47,7 +49,7 @@ Response TwitterDataService::postTweet(char *params)
     responseChunk.size = 0;
 
     if ((res = this->httpClient.POST(
-             (char const *)"http://localhost:3001/hello",
+             (char const *)"http://localhost:3001/post",
              headers,
              params,
              this->responseCallback,

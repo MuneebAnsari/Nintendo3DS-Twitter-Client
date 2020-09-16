@@ -1,6 +1,8 @@
 #ifndef TEXT_GRAPHIC_H
 #define TEXT_GRAPHIC_H
 
+#include <iostream>
+#include <string>
 #include <3ds.h>
 #include <citro2d.h>
 #include <citro3d.h>
@@ -13,7 +15,7 @@
 class TextGraphic
 {
 private:
-    const char *content;
+    std::string content;
     int contentSize;
     u32 flags;
     float x;
@@ -24,7 +26,7 @@ private:
 
 public:
     TextGraphic();
-    TextGraphic(const char *content,
+    TextGraphic(std::string content,
                 int contentSize,
                 u32 flags,
                 float x,
