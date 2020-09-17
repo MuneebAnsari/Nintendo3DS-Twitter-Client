@@ -18,8 +18,9 @@ private:
     HttpClient httpClient;
 
 public:
+    TwitterDataService();
     TwitterDataService(HttpClient httpClient);
-    Response getUserTweets(char *id);
+    Response getUserTweets();
     Response postTweet(std::string params);
     static size_t responseCallback(void *contents,
                                    size_t size,

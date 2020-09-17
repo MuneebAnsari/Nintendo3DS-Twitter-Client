@@ -30,6 +30,7 @@ private:
     void resetFrame();
 
 public:
+    Timeline();
     Timeline(Tweet **head, C3D_RenderTarget *target);
     void scrollDown();
     void scrollUp();

@@ -92,16 +92,16 @@ int main()
 	C2D_TargetClear(bottom, C2D_Color32(0x00, 0xAC, 0xEE, 0xFF));
 
 	/* 
-	 * Initialize 3DS SOCKET SERVICE before using libcurl 
-	 * reference: https://devkitpro.org/viewtopic.php?t=9020&p=16703
+		* Initialize 3DS SOCKET SERVICE before using libcurl 
+		* reference: https://devkitpro.org/viewtopic.php?t=9020&p=16703
 	*/
 	static u32 *socCtxt = NULL;
 	SocketService ss = SocketService(socCtxt, SOC_ALIGN, SOC_BUFFERSIZE);
 	ss.init();
 
 	/*
-	 * Initialize 3DS read only filesystem (romfs)
-	 * reference: https://www.3dbrew.org/wiki/RomFS
+		* Initialize 3DS read only filesystem (romfs)
+		* reference: https://www.3dbrew.org/wiki/RomFS
 	*/
 	Result romfsRes = romfsInit();
 	if (romfsRes != 0)
@@ -109,32 +109,23 @@ int main()
 		printf("romfsInit: %08lX\n", romfsRes);
 	}
 
-	printf("\nTWITTER ON 3DS\n");
-
 	/*
-	 * Initialize HttpClient - uses libcurl to make HTTP requests
-	 * reference: https://curl.haxx.se/libcurl/c/example.html
-	 * 
-	 * Initialize TwitterDataService - DAO to communicate with API Gateway 
-	 * to (api.twitter.com).
+		* Initialize HttpClient - uses libcurl to make HTTP requests
+		* reference: https://curl.haxx.se/libcurl/c/example.html
+		* 
+		* Initialize TwitterDataService - DAO to communicate with API Gateway 
+		* to (api.twitter.com).
 	*/
 	HttpClient httpClient;
-	TwitterDataService tds = TwitterDataService(httpClient);
-	Response userTweets = tds.getUserTweets((char *)"123");
 
-	// printf("MAIN Data: %s\n", userTweets.data);
-	//printf("MAIN Size: %lu bytes retrieved\n", (unsigned long)userTweets.size);
-
+	TwitterDataService tds;
 	JsonParser jp;
-	json_object *jsonUserTweets = (json_object *)json_tokener_parse(userTweets.data);
-	int n_userTweets = json_object_array_length(jsonUserTweets);
-
 	Tweet *head = NULL;
-	jp.parseTweetObj(jsonUserTweets, n_userTweets, &head, addTweet);
+	Timeline timeline;
 
-	Timeline timeline = Timeline(&head, top);
 	PostTweetGraphic postTweetGraphic = PostTweetGraphic(20, 20);
 	std::string status;
+	bool refresh = true;
 
 	// Main loop
 	while (aptMainLoop())
@@ -148,6 +139,29 @@ int main()
 		C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 		C2D_SceneBegin(top);
 		// -- Scene --
+
+		if (refresh)
+		{
+			C2D_TargetClear(top, C2D_Color32(0x00, 0xAC, 0xEE, 0xFF));
+
+			tds = TwitterDataService(httpClient);
+			Response userTweets = tds.getUserTweets();
+
+			if (head != NULL)
+			{
+				freeTweets(head);
+				head = NULL;
+			}
+
+			json_object *jsonUserTweets = (json_object *)json_tokener_parse(userTweets.data);
+			int n_userTweets = json_object_array_length(jsonUserTweets);
+
+			jp.parseTweetObj(jsonUserTweets, n_userTweets, &head, addTweet);
+
+			timeline = Timeline(&head, top);
+			refresh = false;
+		}
+
 		timeline.draw();
 
 		if (kDown & KEY_DOWN)
@@ -178,6 +192,8 @@ int main()
 			std::string params = status;
 			tds.postTweet(params);
 			status.clear();
+			tds.getUserTweets();
+			refresh = true;
 		}
 
 		C3D_FrameEnd(0);

@@ -9,12 +9,14 @@
 #include "http_client.h"
 #include "twitter_data_service.h"
 
+TwitterDataService::TwitterDataService(){};
+
 TwitterDataService::TwitterDataService(HttpClient httpClient)
 {
     this->httpClient = httpClient;
 }
 
-Response TwitterDataService::getUserTweets(char *id)
+Response TwitterDataService::getUserTweets()
 {
     CURLcode res;
 
@@ -26,7 +28,7 @@ Response TwitterDataService::getUserTweets(char *id)
     responseChunk.size = 0;
 
     if ((res = this->httpClient.GET(
-             (char const *)"http://localhost:3001/hello",
+             (char const *)"http://localhost:3001/get",
              headers,
              this->responseCallback,
              &responseChunk)) != CURLE_OK)

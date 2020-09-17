@@ -11,6 +11,8 @@
 #include "models.h"
 #include "timeline.h"
 
+Timeline::Timeline(){};
+
 Timeline::Timeline(Tweet **head, C3D_RenderTarget *target)
 {
     this->head = *head;
@@ -48,7 +50,6 @@ void Timeline::scrollUp()
 
 void Timeline::draw()
 {
-
     while (this->head != NULL)
     {
         TweetGraphic currTweetGraphic = TweetGraphic(this->head, this->xs, this->ys);
