@@ -92,16 +92,16 @@ int main()
 	C2D_TargetClear(bottom, C2D_Color32(0x00, 0xAC, 0xEE, 0xFF));
 
 	/* 
-		* Initialize 3DS SOCKET SERVICE before using libcurl 
-		* reference: https://devkitpro.org/viewtopic.php?t=9020&p=16703
+	* Initialize 3DS SOCKET SERVICE before using libcurl 
+	* reference: https://devkitpro.org/viewtopic.php?t=9020&p=16703
 	*/
 	static u32 *socCtxt = NULL;
 	SocketService ss = SocketService(socCtxt, SOC_ALIGN, SOC_BUFFERSIZE);
 	ss.init();
 
 	/*
-		* Initialize 3DS read only filesystem (romfs)
-		* reference: https://www.3dbrew.org/wiki/RomFS
+	* Initialize 3DS read only filesystem (romfs)
+	* reference: https://www.3dbrew.org/wiki/RomFS
 	*/
 	Result romfsRes = romfsInit();
 	if (romfsRes != 0)
@@ -110,11 +110,11 @@ int main()
 	}
 
 	/*
-		* Initialize HttpClient - uses libcurl to make HTTP requests
-		* reference: https://curl.haxx.se/libcurl/c/example.html
-		* 
-		* Initialize TwitterDataService - DAO to communicate with API Gateway 
-		* to (api.twitter.com).
+	* Initialize HttpClient - uses libcurl to make HTTP requests
+	* reference: https://curl.haxx.se/libcurl/c/example.html
+	* 
+	* Initialize TwitterDataService - DAO to communicate with API Gateway 
+	* to (api.twitter.com).
 	*/
 	HttpClient httpClient;
 
