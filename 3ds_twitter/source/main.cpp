@@ -22,6 +22,7 @@
 #include "twitter_data_service.h"
 #include "json_parser.h"
 #include "tweet_graphic.h"
+#include "toolbar_graphic.h"
 #include "models.h"
 #include "timeline.h"
 #include "post_tweet_graphic.h"
@@ -124,6 +125,7 @@ int main()
 	Timeline timeline;
 
 	PostTweetGraphic postTweetGraphic = PostTweetGraphic(20, 20);
+	ToolbarGraphic toolbar = ToolbarGraphic(0, GSP_SCREEN_HEIGHT_BOTTOM * 0.63);
 	std::string status;
 	bool refresh = true;
 
@@ -138,8 +140,8 @@ int main()
 
 		C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 		C2D_SceneBegin(top);
-		// -- Scene --
 
+		// -- Top Scene --
 		if (refresh)
 		{
 			C2D_TargetClear(top, C2D_Color32(0x00, 0xAC, 0xEE, 0xFF));
@@ -166,33 +168,40 @@ int main()
 
 		if (kDown & KEY_DOWN)
 		{
-			// check for scroll down event
+			// scroll down event
 			timeline.scrollDown();
 		}
 		else if (kDown & KEY_UP)
 		{
-			// check for scroll up event
+			// scroll up event
 			timeline.scrollUp();
+
+			// mimic twitter mobile scroll up on first page to retrieve timeline updates
+			if (timeline.getPageNum() == 1)
+				refresh = true;
 		}
 
+		// -- Bottom Scene --
 		C2D_SceneBegin(bottom);
 
+		toolbar.draw();
 		postTweetGraphic.draw();
 
 		if (kDown & KEY_LEFT)
 		{
-			// check for init keyboard event
+			// open keyboard event
 			status = postTweetGraphic.updateWithText();
 			postTweetGraphic.draw();
 		}
 
 		else if (status.length() > 0 && (kDown & KEY_RIGHT))
 		{
-			// post tweet
+			// post tweet event
 			std::string params = status;
 			tds.postTweet(params);
 			status.clear();
 			tds.getUserTweets();
+			postTweetGraphic.clear();
 			refresh = true;
 		}
 
