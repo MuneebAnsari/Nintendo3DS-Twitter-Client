@@ -6,11 +6,6 @@
 #include <citro2d.h>
 #include <citro3d.h>
 #include <tex3ds.h>
-#include <sys/types.h>
-#include <cstdarg>
-#include <cstdio>
-#include <stdlib.h>
-#include <string>
 #include "image_graphic.h"
 #include "text_graphic.h"
 

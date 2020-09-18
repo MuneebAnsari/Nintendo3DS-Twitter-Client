@@ -3,10 +3,6 @@
 
 #include <iostream>
 #include <string>
-#include <stdlib.h>
-#include <cstdarg>
-#include <cstdio>
-#include <sys/types.h>
 #include <curl/curl.h>
 
 typedef struct

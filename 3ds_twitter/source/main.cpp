@@ -1,30 +1,18 @@
-#include <3ds.h>
-#include <stdlib.h>
 #include <iostream>
 #include <string>
-#include <stdio.h>
-#include <malloc.h>
-#include <errno.h>
-#include <stdarg.h>
-#include <unistd.h>
 
-#include <fcntl.h>
-#include <sys/types.h>
-#include <netinet/in.h>
-#include <sys/socket.h>
-
+#include <3ds.h>
 #include <citro2d.h>
-#include <curl/curl.h>
-#include <json-c/json.h>
+#include <citro3d.h>
 
 #include "socket_service.h"
 #include "http_client.h"
 #include "twitter_data_service.h"
 #include "json_parser.h"
-#include "tweet_graphic.h"
-#include "toolbar_graphic.h"
 #include "models.h"
 #include "timeline.h"
+#include "tweet_graphic.h"
+#include "toolbar_graphic.h"
 #include "post_tweet_graphic.h"
 
 #define SOC_ALIGN 0x1000
@@ -176,7 +164,7 @@ int main()
 			// scroll up event
 			timeline.scrollUp();
 
-			// mimic twitter mobile scroll up on first page to retrieve timeline updates
+			// mimic twitter mobile drag scroll on first page to retrieve timeline updates
 			if (timeline.getPageNum() == 1)
 				refresh = true;
 		}

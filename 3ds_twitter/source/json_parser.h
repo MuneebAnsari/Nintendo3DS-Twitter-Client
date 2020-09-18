@@ -1,11 +1,6 @@
 #ifndef JSON_PARSER_H
 #define JSON_PARSER_H
 
-#include <stdlib.h>
-#include <cstdarg>
-#include <cstdio>
-#include <cstring>
-#include <sys/types.h>
 #include <json-c/json.h>
 #include "models.h"
 

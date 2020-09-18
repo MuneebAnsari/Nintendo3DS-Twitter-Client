@@ -2,7 +2,6 @@
 #include <citro2d.h>
 #include <citro3d.h>
 #include <tex3ds.h>
-#include <sys/types.h>
 #include "image_graphic.h"
 
 ImageGraphic::ImageGraphic(C2D_Image *img)

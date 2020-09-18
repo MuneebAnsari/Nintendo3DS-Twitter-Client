@@ -5,10 +5,6 @@
 #include <citro2d.h>
 #include <citro3d.h>
 #include <tex3ds.h>
-#include <sys/types.h>
-#include <cstdarg>
-#include <cstdio>
-#include <stdlib.h>
 #include <vector>
 #include "tweet_graphic.h"
 #include "models.h"

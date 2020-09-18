@@ -1,10 +1,6 @@
 #include <iostream>
 #include <string>
-#include <stdlib.h>
-#include <cstdarg>
-#include <cstdio>
 #include <cstring>
-#include <sys/types.h>
 #include <curl/curl.h>
 #include "http_client.h"
 #include "twitter_data_service.h"

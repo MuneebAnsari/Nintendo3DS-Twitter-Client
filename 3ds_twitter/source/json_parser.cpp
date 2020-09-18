@@ -1,8 +1,3 @@
-#include <stdlib.h>
-#include <cstdarg>
-#include <cstdio>
-#include <cstring>
-#include <sys/types.h>
 #include <json-c/json.h>
 #include "json_parser.h"
 

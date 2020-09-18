@@ -2,10 +2,6 @@
 #include <citro2d.h>
 #include <citro3d.h>
 #include <tex3ds.h>
-#include <sys/types.h>
-#include <cstdarg>
-#include <cstdio>
-#include <stdlib.h>
 #include <vector>
 #include "tweet_graphic.h"
 #include "models.h"
@@ -59,7 +55,7 @@ void Timeline::draw()
     {
         TweetGraphic currTweetGraphic = TweetGraphic(this->head, this->xs, this->ys);
 
-        if (this->screenSpace > 0)
+        if (this->screenSpace > 20)
         {
             currTweetGraphic.draw();
             this->numTweetsOnPage++;

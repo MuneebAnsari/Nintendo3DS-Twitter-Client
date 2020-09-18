@@ -1,11 +1,6 @@
 #ifndef MODELS_H
 #define MODELS_H
 
-#include <sys/types.h>
-#include <cstdarg>
-#include <cstdio>
-#include <stdlib.h>
-
 struct tweet
 {
     char *text;

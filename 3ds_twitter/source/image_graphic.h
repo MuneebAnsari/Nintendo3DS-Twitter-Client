@@ -5,7 +5,6 @@
 #include <citro2d.h>
 #include <citro3d.h>
 #include <tex3ds.h>
-#include <sys/types.h>
 
 class ImageGraphic
 {
