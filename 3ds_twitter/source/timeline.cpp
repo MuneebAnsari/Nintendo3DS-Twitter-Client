@@ -24,6 +24,11 @@ Timeline::Timeline(Tweet **head, C3D_RenderTarget *target)
     this->pageNum = 1;
 }
 
+int &Timeline ::getPageNum()
+{
+    return this->pageNum;
+}
+
 void Timeline::scrollDown()
 {
     if (this->screenSpace <= 0 && this->head != NULL)

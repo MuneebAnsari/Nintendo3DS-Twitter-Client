@@ -32,6 +32,7 @@ private:
 public:
     Timeline();
     Timeline(Tweet **head, C3D_RenderTarget *target);
+    int &getPageNum();
     void scrollDown();
     void scrollUp();
     void draw();
