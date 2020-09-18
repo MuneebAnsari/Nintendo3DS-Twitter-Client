@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "text_graphic.h"
+#include "image_graphic.h"
 #include "post_tweet_graphic.h"
 
 PostTweetGraphic::PostTweetGraphic(float xStart, float yStart)
@@ -38,7 +39,7 @@ std::string PostTweetGraphic::updateWithText()
         this->tweetBuf = inpStr;
         this->post =
             TextGraphic(this->tweetBuf,
-                        sizeof(this->tweetBuf),
+                        sizeof(tmp),
                         C2D_AlignLeft | C2D_WordWrap,
                         this->xStart + 10,
                         this->yStart + 10,
@@ -47,6 +48,12 @@ std::string PostTweetGraphic::updateWithText()
                         0.45f);
     }
     return this->tweetBuf;
+}
+
+void PostTweetGraphic::clear()
+{
+    this->tweetBuf.clear();
+    this->draw();
 }
 
 void PostTweetGraphic::draw()
@@ -64,7 +71,7 @@ void PostTweetGraphic::draw()
     if (this->tweetBuf.length() == 0)
     {
 
-        this->post =
+        TextGraphic initText =
             TextGraphic("What's happening?",
                         sizeof("What's happening?"),
                         C2D_AlignLeft,
@@ -74,11 +81,12 @@ void PostTweetGraphic::draw()
                         0.45f,
                         0.45f);
 
-        this->post.draw();
+        initText.draw();
     }
     else if (this->tweetBuf.length() <= 281)
     {
-        this->post.draw(w - 15);
+        float wordWrap = this->xStart + w - 40;
+        this->post.draw(wordWrap);
     }
     else
     {

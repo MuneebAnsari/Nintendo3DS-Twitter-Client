@@ -11,6 +11,7 @@
 #include <cstdio>
 #include <stdlib.h>
 #include <string>
+#include "image_graphic.h"
 #include "text_graphic.h"
 
 class PostTweetGraphic
@@ -24,6 +25,7 @@ private:
 public:
     PostTweetGraphic(float xStart, float yStart);
     std::string updateWithText();
+    void clear();
     void draw();
 };
 
